@@ -1,7 +1,8 @@
 export interface OAuthRequest {
   url: string;
   method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
-  data?: string | any;
+  query?: Record<string, any>;
+  body?: Record<string, any>;
 }
 
 export interface OAuthToHeaderOptions {

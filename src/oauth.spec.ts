@@ -51,6 +51,8 @@ test('encodeParameters', t => {
     {
       a: 1,
       b: [2, 3],
+    },
+    {
       c: 4,
     },
   );
@@ -60,10 +62,39 @@ test('encodeParameters', t => {
   );
 });
 
+test('encodeParameters empty body', t => {
+  const result = OAuth.encodeParameters(
+    {
+      oauth_consumer_key: 'key',
+      oauth_nonce: 'nonce',
+      oauth_signature_method: 'HMAC-SHA256',
+      oauth_timestamp: '1',
+      oauth_version: '1.0',
+      oauth_token: 'token',
+      oauth_body_hash: 'bodyHash',
+      oauth_signature: 'signature',
+    },
+    {
+      a: 1,
+      b: [2, 3],
+    },
+  );
+  t.is(
+    result,
+    'a%3D1%26b%3D2%26b%3D3%26oauth_body_hash%3DbodyHash%26oauth_consumer_key%3Dkey%26oauth_nonce%3Dnonce%26oauth_signature%3Dsignature%26oauth_signature_method%3DHMAC-SHA256%26oauth_timestamp%3D1%26oauth_token%3Dtoken%26oauth_version%3D1.0',
+  );
+});
+
 test('generateSignature', t => {
   const result = OAuth.generateSignature(
-    'GET',
-    'http://localhost:3000/api/v1/campaigns?a=1&b=2',
+    {
+      method: 'GET',
+      url: 'http://localhost:3000/api/v1/campaigns',
+      query: {
+        a: 1,
+        b: 2,
+      },
+    },
     {
       oauth_consumer_key: 'key',
       oauth_nonce: 'meMW5KBOXmcs8gZ0C2YplIne0gKAo1Au',
@@ -71,10 +102,9 @@ test('generateSignature', t => {
       oauth_timestamp: '1646405666',
       oauth_version: '1.0',
     },
-    {},
     'secret',
   );
-  t.is(result, 'Hef0lrl3BKMDyiE4zGLlwcr4VXo=');
+  t.is(result, 'bUvoOp8YZ+tKR0ZV6qhVLP3JJHc=');
 });
 
 test('authorization', t => {
@@ -194,15 +224,19 @@ test('all', t => {
   const header = OAuth.authorize(
     {
       method: 'GET',
-      url: 'http://localhost:3000/api/v1/campaigns?a=1&b=2',
+      url: 'http://localhost:3000/api/v1/campaigns',
+      query: {
+        fromDate: '2022-01-01',
+        toDate: '2022-02-01',
+      },
     },
     {
       consumer: {
         key: 'key',
         secret: 'secret',
       },
-      nonce: 'meMW5KBOXmcs8gZ0C2YplIne0gKAo1Au',
-      timestamp: '1646405666',
+      nonce: '2GWnTKLbiupHylCQ5fPThJT3BI9cf5Gz',
+      timestamp: '1646659990',
     },
     {
       key: 'token_key',
@@ -211,6 +245,6 @@ test('all', t => {
 
   t.is(
     header,
-    `OAuth oauth_consumer_key="key", oauth_nonce="meMW5KBOXmcs8gZ0C2YplIne0gKAo1Au", oauth_signature="MCsAloAtBPr4JXRkpeej7DUFJxk%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1646405666", oauth_token="token_key", oauth_version="1.0"`,
+    `OAuth oauth_consumer_key="key", oauth_nonce="2GWnTKLbiupHylCQ5fPThJT3BI9cf5Gz", oauth_signature="4wPj8Uu9yyU2L1lQnrLA95uV094%3D", oauth_signature_method="HMAC-SHA1", oauth_timestamp="1646659990", oauth_token="token_key", oauth_version="1.0"`,
   );
 });

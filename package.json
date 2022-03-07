@@ -1,6 +1,6 @@
 {
   "name": "@fcus/oauth-1-header",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Node.js lib for OAuth1.0 header generation",
   "repository": {
     "type": "git",

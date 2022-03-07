@@ -39,10 +39,8 @@ export class OAuth {
     }
 
     oauthData.oauth_signature = OAuth.generateSignature(
-      request.method,
-      request.url,
+      request,
       oauthData,
-      request.data,
       opts.consumer.secret!,
       token?.secret,
       opts.encodeSignature,
@@ -78,19 +76,21 @@ export class OAuth {
   }
 
   static generateSignature(
-    httpMethod: OAuthRequest['method'],
-    url: OAuthRequest['url'],
+    request: OAuthRequest,
     oauthData: OAuthData,
-    data: OAuthRequest['data'],
     consumerSecret: OAuthToken['secret'],
     tokenSecret?: string,
     encode: boolean = false,
     signatureMethod: string = 'HMAC-SHA1',
   ) {
-    const urlBaseEncoded = OAuth.encode(url.split('?')[0]);
-    const paramsStringEncoded = OAuth.encodeParameters(oauthData, data);
+    const urlBaseEncoded = OAuth.encode(request.url.split('?')[0]);
+    const paramsStringEncoded = OAuth.encodeParameters(
+      oauthData,
+      request.query,
+      request.body,
+    );
 
-    const _value = `${httpMethod}&${urlBaseEncoded}&${paramsStringEncoded}`;
+    const _value = `${request.method}&${urlBaseEncoded}&${paramsStringEncoded}`;
 
     const signingKey = OAuth.generateSigningKey(consumerSecret, tokenSecret);
     const signature = OAuth.hash(_value, signingKey, signatureMethod);
@@ -98,10 +98,15 @@ export class OAuth {
     return signature;
   }
 
-  static encodeParameters(oauthData: OAuthData, data: OAuthRequest['data']) {
+  static encodeParameters(
+    oauthData: OAuthData,
+    query?: OAuthRequest['query'],
+    body?: OAuthRequest['body'],
+  ) {
     const params: Record<string, any> = {
       ...oauthData,
-      ...(oauthData.oauth_body_hash ? data : {}),
+      ...(query ?? {}),
+      ...(oauthData.oauth_body_hash ? body ?? {} : {}),
     };
 
     const encodedParams: Record<string, string | string[]> = {};
