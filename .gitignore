@@ -1,0 +1,22 @@
+# Dependency directory
+node_modules
+bower_components
+
+# Editors
+.idea
+*.iml
+.vscode
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Ignore build directory
+dist
+
+# Coverage
+coverage
+
+# ignore lock files
+yarn.lock
+package-lock.json

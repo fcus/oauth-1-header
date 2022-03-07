@@ -1,0 +1,45 @@
+{
+  "name": "@fcus/oauth-1-header",
+  "version": "0.1.0",
+  "description": "Node.js lib for OAuth1.0 header generation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fcus/oauth-1-header"
+  },
+  "keywords": [],
+  "author": "Vaniel Silva <vaniel@cloudplusplus.nl>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fcus/oauth-1-header/issues"
+  },
+  "homepage": "https://github.com/fcus/oauth-1-header#readme",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "rm -rf dist && tsc",
+    "test": "ava",
+    "coverage": "c8 ava"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "ava": "^4.0.1",
+    "c8": "^7.11.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "ava": {
+    "files": [
+      "src/**/*.spec.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  }
+}
