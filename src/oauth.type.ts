@@ -8,7 +8,6 @@ export interface OAuthRequest {
 export interface OAuthToHeaderOptions {
   realm?: string;
   parameterSeperator?: string;
-  encodeSignature?: boolean;
 }
 
 export interface OAuthOptions {

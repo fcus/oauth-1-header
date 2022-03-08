@@ -8,10 +8,10 @@ import {
   OAuthToken,
 } from './oauth.type';
 
-const WORD_CHARACTERS =
-  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
 export class OAuth {
+  static WORD_CHARACTERS =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
   static authorize(
     request: OAuthRequest,
     opts: OAuthOptions,
@@ -69,10 +69,11 @@ export class OAuth {
   }
 
   static generateNonce(length = 32) {
-    return Array.from(
-      { length: length },
-      () => WORD_CHARACTERS[Math.round(Math.random() * WORD_CHARACTERS.length)],
-    ).join('');
+    const charsLength = OAuth.WORD_CHARACTERS.length;
+    return Array.from({ length: length }, () => {
+      const charIndex = Math.round(Math.random() * charsLength);
+      return OAuth.WORD_CHARACTERS[charIndex];
+    }).join('');
   }
 
   static generateSignature(
@@ -89,24 +90,24 @@ export class OAuth {
       request.query,
       request.body,
     );
-
     const _value = `${request.method}&${urlBaseEncoded}&${paramsStringEncoded}`;
 
     const signingKey = OAuth.generateSigningKey(consumerSecret, tokenSecret);
     const signature = OAuth.hash(_value, signingKey, signatureMethod);
+
     if (encode) return OAuth.encode(signature);
     return signature;
   }
 
   static encodeParameters(
     oauthData: OAuthData,
-    query?: OAuthRequest['query'],
-    body?: OAuthRequest['body'],
+    query: OAuthRequest['query'] = {},
+    body: OAuthRequest['body'] = {},
   ) {
     const params: Record<string, any> = {
       ...oauthData,
-      ...(query ?? {}),
-      ...(oauthData.oauth_body_hash ? body ?? {} : {}),
+      ...query,
+      ...(oauthData.oauth_body_hash ? body : {}),
     };
 
     const encodedParams: Record<string, string | string[]> = {};

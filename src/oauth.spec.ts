@@ -188,7 +188,6 @@ test('toHeader with options', t => {
   const toHeaderOpts: OAuthToHeaderOptions = {
     realm: 'realm',
     parameterSeperator: '; ',
-    encodeSignature: true,
   };
 
   const result = OAuth.generateAuthorization(
@@ -202,6 +201,7 @@ test('toHeader with options', t => {
         secret: 'secret',
       },
       signatureMethod: 'HMAC-SHA1',
+      encodeSignature: true,
       ...toHeaderOpts,
     },
   );
